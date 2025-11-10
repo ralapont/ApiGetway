@@ -9,14 +9,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().toString();
 
-        // Permitir acceso libre al endpoint de login
-        if (path.startsWith("/api/auth/login")|| path.startsWith("/api/auth/register")) {
+        List<String> publicPaths = List.of(
+                "/api/auth/login",
+                "/api/auth/register",
+                "/api/auth/user"
+        );
+
+        if (publicPaths.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
         }
 
