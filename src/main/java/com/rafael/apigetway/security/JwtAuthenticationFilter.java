@@ -1,5 +1,9 @@
 package com.rafael.apigetway.security;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -11,10 +15,15 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
+
+    private final JwtUtil jwtUtil = new JwtUtil("TuClaveSecretaSuperSegura1234567890");
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
         String path = exchange.getRequest().getPath().toString();
 
         List<String> publicPaths = List.of(
@@ -36,12 +45,26 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         }
 
         String token = authHeader.substring(7);
+        log.info("Token recibido: {}", token);
+        try {
+            Claims claims = jwtUtil.parseToken(token);
 
-        // Aquí deberías validar el token (por ejemplo, usando una librería JWT)
-        // Si el token es inválido, rechaza la petición
+            String username = claims.getSubject();
+            List<String> roles = claims.get("roles", List.class);
 
-        // Si es válido, continúa
-        return chain.filter(exchange);
+            // Propagar info al request
+            exchange.getRequest().mutate()
+                    .header("X-User", username)
+                    .header("X-Roles", String.join(",", roles))
+                    .build();
+
+            return chain.filter(exchange);
+
+        } catch (Exception e) {
+            log.error("Token inválido: {}", e.getMessage());
+            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+            return exchange.getResponse().setComplete();
+        }
     }
 
     @Override

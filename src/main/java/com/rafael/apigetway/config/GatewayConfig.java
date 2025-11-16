@@ -22,6 +22,8 @@ public class GatewayConfig {
                         .uri("lb://AUTHSERVICIO"))
                 .route("test-route", r -> r.path("/api/test/**")
                         .uri("lb://AUTHSERVICIO"))
+                .route("pedido-route", r -> r.path("/api/pedidos/**")
+                        .uri("lb://PEDIDOSERVICIO"))
                 .build();
     }
 }
