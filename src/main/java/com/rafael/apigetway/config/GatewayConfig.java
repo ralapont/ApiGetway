@@ -5,25 +5,23 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-
 @Configuration
 public class GatewayConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("productos-route", r -> r.path("/api/productos/**")
-                    .uri("lb://PRODUCTOSERVICIO"))
+                    .uri("lb://product-service"))
                 .route("categorias-route", r -> r.path("/api/categorias/**")
-                    .uri("lb://PRODUCTOSERVICIO"))
+                    .uri("lb://product-service"))
                 .route("clientes-route", r -> r.path("/api/clientes/**")
-                    .uri("lb://CLIENTESERVICIO"))
+                    .uri("lb://cliente-service"))
                 .route("auth-route", r -> r.path("/api/auth/**")
-                        .uri("lb://AUTHSERVICIO"))
+                        .uri("lb://auth-service"))
                 .route("test-route", r -> r.path("/api/test/**")
-                        .uri("lb://AUTHSERVICIO"))
+                        .uri("lb://auth-service"))
                 .route("pedido-route", r -> r.path("/api/pedidos/**")
-                        .uri("lb://PEDIDOSERVICIO"))
+                        .uri("lb://pedido-service"))
                 .build();
     }
 }
