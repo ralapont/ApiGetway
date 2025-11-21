@@ -11,9 +11,9 @@ public class GatewayConfig {
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("productos-route", r -> r.path("/api/productos/**")
-                    .uri("lb://product-service"))
+                    .uri("lb://producto-service"))
                 .route("categorias-route", r -> r.path("/api/categorias/**")
-                    .uri("lb://product-service"))
+                    .uri("lb://producto-service"))
                 .route("clientes-route", r -> r.path("/api/clientes/**")
                     .uri("lb://cliente-service"))
                 .route("auth-route", r -> r.path("/api/auth/**")

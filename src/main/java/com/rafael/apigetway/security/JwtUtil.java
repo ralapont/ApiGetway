@@ -6,7 +6,6 @@ import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 
 public class JwtUtil {
     private final SecretKey secretKey;
